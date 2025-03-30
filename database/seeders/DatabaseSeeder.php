@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Area;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\City;
+use App\Models\User;
+use App\Models\AreaTranslation;
+use App\Models\CityTranslation;
 use Illuminate\Database\Seeder;
-use Modules\House\Database\Seeders\HouseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,11 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // User::factory(10)->create();
+        // City::factory()->count(10)->create();
+        // CityTranslation::factory()->count(10)->create();
+        // Area::factory()->count(10)->create();
+        // AreaTranslation::factory()->count(10)->create();
     }
 }

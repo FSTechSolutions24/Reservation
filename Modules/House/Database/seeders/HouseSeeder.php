@@ -4,21 +4,13 @@ namespace Modules\House\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\House\Entities\House;
+use Modules\House\Entities\HouseTranslation;
 
 class HouseSeeder extends Seeder
 {
     public function run()
     {
-        House::create([
-            'name' => 'Luxury Villa',
-            'address' => '123 Palm Street',
-            'price' => 500000
-        ]);
-
-        House::create([
-            'name' => 'Cozy Apartment',
-            'address' => '456 Main Street',
-            'price' => 150000
-        ]);
+        House::factory()->count(10)->create();
+        HouseTranslation::factory()->count(10)->create();
     }
 }

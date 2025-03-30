@@ -1,20 +1,20 @@
 <?php
 
-namespace Modules\House\Http\Controllers;
+namespace App\Http\Controllers;
 
+use App\Models\City;
 use Illuminate\Http\Request;
-use Modules\House\Entities\House;
 use App\Http\Controllers\Controller;
 
-class HouseController extends Controller
+class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $houses = House::with('translation')->get();
-        return response()->json($houses, 200);
+        $cities = City::with('translation')->get();
+        return response()->json($cities, 200);
     }
 
     /**
@@ -22,7 +22,7 @@ class HouseController extends Controller
      */
     public function create()
     {
-        return view('house::create');
+
     }
 
     /**
@@ -35,8 +35,8 @@ class HouseController extends Controller
      */
     public function show($id)
     {        
-        $house = House::with('translation')->findOrFail($id);
-        return response()->json($house, 200);
+        $city = City::with('translation')->findOrFail($id);
+        return response()->json($city, 200);
     }
 
     /**
@@ -44,7 +44,7 @@ class HouseController extends Controller
      */
     public function edit($id)
     {
-        return view('house::edit');
+
     }
 
     /**

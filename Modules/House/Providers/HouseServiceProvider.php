@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class HouseServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,7 @@ class HouseServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
+        $this->registerFactories();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
     }
 
@@ -131,5 +133,11 @@ class HouseServiceProvider extends ServiceProvider
         }
 
         return $paths;
+    }
+
+    public function registerFactories(){
+        Factory::guessFactoryNamesUsing(function ($modelName) {
+            return 'Modules\\House\\Database\\factories\\' . class_basename($modelName) . 'Factory';
+        });
     }
 }

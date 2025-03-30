@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('houses', function (Blueprint $table) {
-            $table->id();
-            $table->string('gps_location');
-            $table->foreignId('city_id')->nullable()->constrained('cities');
-            $table->foreignId('area_id')->nullable()->constrained('areas');
-            $table->integer('capacity')->nullable();
+        Schema::create('area_translations', function (Blueprint $table) {
+            $table->id();            
+            $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
+            $table->string('locale', 5)->index();
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -26,6 +25,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('houses');
+        Schema::table('area_translations', function (Blueprint $table) {
+            //
+        });
     }
 };
