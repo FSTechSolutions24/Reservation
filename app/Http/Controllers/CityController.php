@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\City;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+// use Illuminate\Routing\Controller;
 
 class CityController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('permission:view_city')->only(['index', 'show']);
+        $this->middleware('permission:create_city')->only('store');
+        $this->middleware('permission:edit_city')->only('update');
+        $this->middleware('permission:delete_city')->only('destroy');
+    }
+
     /**
      * Display a listing of the resource.
      */
