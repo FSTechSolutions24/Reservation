@@ -104,10 +104,18 @@ class UserController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
+    public function deleteUser(User $user){
+        if (!$this->can_do_action($user->user_type, 'delete')) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $user->delete();
+        return response()->json(['The user has been successfully deleted.'], 200);
+    }
+
     public function can_do_action($type, $action){
         $permissionMap = [
-            'a' => [ 'create' => 'create_admin', 'update' => 'edit_admin' ],
-            'u' => [ 'create' => 'create_user', 'update' => 'edit_user' ],
+            'a' => [ 'create' => 'create_admin', 'update' => 'edit_admin', 'delete' => 'delete_admin', 'view' => 'view_admin' ],
+            'u' => [ 'create' => 'create_user', 'update' => 'edit_user', 'delete' => 'delete_user', 'view' => 'view_user' ],
         ];
     
         $permission = $permissionMap[$type][$action] ?? null;
@@ -117,6 +125,13 @@ class UserController extends Controller
         }
     
         return Auth::user()->can($permission, 'api');
+    }
+
+    public function getUser(User $user){
+        if (!$this->can_do_action($user->user_type, 'view')) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        return response()->json(['user' => $user], 200);
     }
 
 }

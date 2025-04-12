@@ -20,8 +20,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::post('user/{user}/permissions', [UserController::class, 'assignPermissionsToUser'])->name('assignPermissionsToUser');
     Route::post('user/{user}/assign-role', [UserController::class, 'assignRoleToUser'])->name('assignRoleToUser');
+
+
+    // we need to convert these routes to apiResource
     Route::post('user/createUser', [UserController::class, 'createUser'])->name('createUser');
     Route::patch('user/updateUser/{user}', [UserController::class, 'updateUser'])->name('updateUser');
+    Route::delete('user/deleteUser/{user}', [UserController::class, 'deleteUser'])->name('deleteUser');
+    Route::get('user/getUser/{user}', [UserController::class, 'getUser'])->name('getUser');
 
 
     Route::get('modules', [ModuleController::class, 'index']);
