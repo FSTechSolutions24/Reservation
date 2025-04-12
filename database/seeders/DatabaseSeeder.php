@@ -9,7 +9,9 @@ use App\Models\User;
 use App\Models\AreaTranslation;
 use App\Models\CityTranslation;
 use Illuminate\Database\Seeder;
+use Database\Seeders\AreaPermissionSeeder;
 use Database\Seeders\CityPermissionSeeder;
+use Database\Seeders\UserPermissionSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +26,8 @@ class DatabaseSeeder extends Seeder
         // CityTranslation::factory()->count(10)->create();
         // Area::factory()->count(10)->create();
         // AreaTranslation::factory()->count(10)->create();
+        $this->call(UserPermissionSeeder::class);
         $this->call(CityPermissionSeeder::class);
+        $this->call(AreaPermissionSeeder::class);
     }
 }

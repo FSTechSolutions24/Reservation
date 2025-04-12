@@ -36,39 +36,87 @@ class UserController extends Controller
         ]);
     }
 
-    public function assignPermissionsToUser(Request $request, User $user)
+    public function assignPermissionsToUser(User $user, $permissions)
     {
-        $request->validate([
+        $validatedPermissions = validator([
+            'permissions' => $permissions
+        ], [
             'permissions' => 'required|array',
-            'permissions.*' => 'integer|exists:permissions,id'
-        ]);
-
-        $user->givePermissionTo($request->permissions);
-
-        return response()->json([
-            'message' => 'Permissions assigned successfully.',
-            'permissions' => $user->getPermissionNames(),
-        ]);
+            'permissions.*' => 'integer|exists:permissions,id',
+        ])->validate();
+    
+        // Assign permissions to the user
+        $user->syncPermissions($validatedPermissions['permissions']);
     }
 
-    public function createAdmin(Request $request)
+    public function createUser(Request $request)
     {
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6',
+            'user_type' => 'required|in:a,u',
         ]);
+
+        if(!$this->can_do_action($request->user_type, 'create')){
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'user_type' => 'a',
+            'user_type' => $request->user_type,
         ]);
+
+        if ($request->has('permissions')) {
+            $this->assignPermissionsToUser($user, $request->permissions);
+        }
 
         $token = $user->createToken('Personal Access Token')->accessToken;
 
         return response()->json(['token' => $token, 'user' => $user], 201);
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|min:6',
+        ]);
+    
+        if (!$this->can_do_action($user->user_type, 'update')) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+    
+        $user->name = $request->name;
+    
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+    
+        if ($request->has('permissions')) {
+            $this->assignPermissionsToUser($user, $request->permissions);
+        }
+
+        $user->save();
+    
+        return response()->json(['user' => $user], 200);
+    }
+
+    public function can_do_action($type, $action){
+        $permissionMap = [
+            'a' => [ 'create' => 'create_admin', 'update' => 'edit_admin' ],
+            'u' => [ 'create' => 'create_user', 'update' => 'edit_user' ],
+        ];
+    
+        $permission = $permissionMap[$type][$action] ?? null;
+    
+        if (!$permission) {
+            return false;
+        }
+    
+        return Auth::user()->can($permission, 'api');
     }
 
 }

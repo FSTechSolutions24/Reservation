@@ -13,7 +13,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles {
+        hasPermissionTo as traitHasPermissionTo;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -59,7 +62,7 @@ class User extends Authenticatable
             return true;
         }
 
-        return parent::hasPermissionTo($permission, $guard);
+        return $this->traitHasPermissionTo($permission, $guard);
     }
 
 

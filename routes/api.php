@@ -20,7 +20,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::post('user/{user}/permissions', [UserController::class, 'assignPermissionsToUser'])->name('assignPermissionsToUser');
     Route::post('user/{user}/assign-role', [UserController::class, 'assignRoleToUser'])->name('assignRoleToUser');
-    Route::post('user/createAdmin', [UserController::class, 'createAdmin'])->name('createAdmin');
+    Route::post('user/createUser', [UserController::class, 'createUser'])->name('createUser');
+    Route::patch('user/updateUser/{user}', [UserController::class, 'updateUser'])->name('updateUser');
 
 
     Route::get('modules', [ModuleController::class, 'index']);
