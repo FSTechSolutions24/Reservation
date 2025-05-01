@@ -5,11 +5,11 @@ namespace Modules\House\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Modules\House\Entities\HouseTranslation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\House\Database\Factories\HouseFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class House extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

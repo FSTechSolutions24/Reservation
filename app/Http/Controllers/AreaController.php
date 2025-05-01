@@ -4,56 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
-class AreaController extends Controller
+class AreaController extends BaseCrudController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected string $model = Area::class;
+    protected ?string $translationRelation = 'translations';
+    protected array $mainFields = ['city_id'];
+    protected array $translationFields = ['name', 'locale'];
+
+    protected function validationRules(Request $request, $id = null): array
     {
-        $areas = Area::with('translation')->get();
-        return response()->json($areas, 200);
+        return [
+            'name' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($id, $request) {
+                    $cityId = $request->input('city_id');
+                    $exists = DB::table('area_translations')
+                        ->join('areas', 'areas.id', '=', 'area_translations.area_id')
+                        ->where('area_translations.name', $value)
+                        ->where('areas.city_id', $cityId)
+                        ->when($id, function ($q) use ($id) {
+                            $q->where('area_translations.area_id', '!=', $id);
+                        })
+                        ->exists();
+                    if ($exists) {
+                        $fail("The name has already been taken for this city.");
+                    }
+                }
+            ],
+            'locale'    =>  'required|string|size:2',
+            'city_id'   =>  'required|exists:cities,id',
+        ];
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {        
-        $area = Area::with('translation')->findOrFail($id);
-        return response()->json($area, 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
 }
+
