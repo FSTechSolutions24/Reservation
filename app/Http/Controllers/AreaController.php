@@ -13,6 +13,14 @@ class AreaController extends BaseCrudController
     protected array $mainFields = ['city_id'];
     protected array $translationFields = ['name', 'locale'];
 
+    public function __construct()
+    {
+        $this->middleware('permission:view_area')->only(['index', 'show']);
+        $this->middleware('permission:create_area')->only('store');
+        $this->middleware('permission:edit_area')->only('update');
+        $this->middleware('permission:delete_area')->only('destroy');
+    }
+
     protected function validationRules(Request $request, $id = null): array
     {
         return [

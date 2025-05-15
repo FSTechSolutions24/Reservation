@@ -83,7 +83,7 @@ abstract class BaseCrudController extends Controller
         $validated = $validator->validated(); // Get the validated data
 
         $modelClass = $this->model;
-        $record = $modelClass::findOrFail($id);
+        $record = $modelClass::findOrFail($id); // This is working as a required validation on the rules (check if the id exists or not)
 
         DB::transaction(function () use ($validated, &$record) {
             $mainData = array_intersect_key($validated, array_flip($this->mainFields));
